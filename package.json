@@ -1,0 +1,26 @@
+{
+    "name": "com.teetwostudio.services.basic_ui",
+    "version": "0.0.1",
+    "unityRelease": "11f1",
+    "displayName": "TEE II Studio Services Basic UI",
+    "description": "This will help your for mocking or official craete UI.",
+    "dependencies": {
+      "com.teetwostudio.services.utility": "0.0.1",
+      "com.unity.2d.sprite": "1.0.0"
+    },
+    "keywords": [
+      "UI",
+      "Services"
+    ],
+    "category": "Utility",
+    "unity": "2021.3",
+    "author": {
+      "name": "TEE II studio",
+      "email": "watchaphon40225@gmail.com"
+    },
+    "repository": {
+      "url": "https://github.com/Watchaphon/com.teetwostudio.services.basic_ui.git",
+      "type": "git",
+      "revision": "6b783c5dfb5a72d73e2b0a70d1caf4a367c58805"
+    }
+}
