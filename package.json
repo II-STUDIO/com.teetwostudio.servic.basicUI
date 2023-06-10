@@ -1,6 +1,6 @@
 {
     "name": "com.teetwostudio.services.basic_ui",
-    "version": "0.0.1",
+    "version": "0.0.2",
     "unityRelease": "11f1",
     "displayName": "TEE II Studio Services Basic UI",
     "description": "This will help your for mocking or official craete UI.",
