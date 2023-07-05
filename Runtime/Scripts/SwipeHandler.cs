@@ -2,7 +2,6 @@ using UnityEngine;
 using UnityEngine.UI;
 using UnityEngine.EventSystems;
 using System;
-using UnityEngine.Events;
 
 namespace Services.UI
 {
@@ -11,16 +10,11 @@ namespace Services.UI
     {
         [SerializeField] private float minDetectDistance = 22f;
         [SerializeField] private float maxDetectTime = 0.4f;
-        [Header("Event")]
-        [SerializeField] private UnityEvent onSwipeLeft;
-        [SerializeField] private UnityEvent onSwipeRight;
-        [SerializeField] private UnityEvent onSwipeUp;
-        [SerializeField] private UnityEvent onSwipeDown;
 
-        public UnityEvent OnSwipeLeft => onSwipeLeft;
-        public UnityEvent OnSwipeRight => onSwipeRight;
-        public UnityEvent OnSwipeUp => onSwipeUp;
-        public UnityEvent OnSwipeDown => onSwipeDown;
+        public Action OnSwipeLeft { get; set; }
+        public Action OnSwipeRight { get; set; }
+        public Action OnSwipeUp { get; set; }
+        public Action OnSwipeDown { get; set; }
 
         private Vector2 beginPosition;
         private Vector2 endPosition;
@@ -123,22 +117,22 @@ namespace Services.UI
 
         private void SwipeLeft()
         {
-            onSwipeLeft.Invoke();
+            OnSwipeLeft?.Invoke();
         }
 
         private void SwipeRight()
         {
-            onSwipeRight.Invoke();
+            OnSwipeRight?.Invoke();
         }
 
         private void SwipeUp()
         {
-            onSwipeUp.Invoke();
+            OnSwipeUp.Invoke();
         }
 
         private void SwipeDown()
         {
-            onSwipeDown.Invoke();
+            OnSwipeDown.Invoke();
         }
     }
 }
