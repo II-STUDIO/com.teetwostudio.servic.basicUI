@@ -30,7 +30,7 @@ public class RadialLayout : LayoutGroup
     }
 #endif
 
-    void CalculateRadial()
+   public void CalculateRadial()
     {
         m_Tracker.Clear();
 
