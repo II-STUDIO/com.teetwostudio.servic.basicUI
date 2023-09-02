@@ -6,6 +6,7 @@ namespace Services.UI
     public class Panel : MonoBehaviour,ITransitionHandle
     {
         [SerializeField] private GameObject root;
+        [SerializeField] private bool isActivable = true;
         [Space]
         [SerializeField] private GenericTransition transition;
 
@@ -90,35 +91,37 @@ namespace Services.UI
 
         private void Enable()
         {
-            Root.SetActive(true);
+            if (isActivable)
+                Root.SetActive(true);
 
             OnOpen?.Invoke();
         }
 
         private void Disable()
         {
-            Root.SetActive(false);
+            if (isActivable)
+                Root.SetActive(false);
 
             OnClose?.Invoke();
         }
 
         #region Transition_Event
-        public void OnFadeInBegin()
+        public virtual void OnFadeInBegin()
         {
             Enable();
         }
 
-        public void OnFadeInComplete()
+        public virtual void OnFadeInComplete()
         {
             //Do Nothing
         }
 
-        public void OnFadeOutBegin()
+        public virtual void OnFadeOutBegin()
         {
             //Do Nothing
         }
 
-        public void OnFadeOutComplete()
+        public virtual void OnFadeOutComplete()
         {
             Disable();
         }
