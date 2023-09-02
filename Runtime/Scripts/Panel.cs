@@ -6,7 +6,7 @@ namespace Services.UI
     public class Panel : MonoBehaviour,ITransitionHandle
     {
         [SerializeField] private GameObject root;
-        [SerializeField] private bool isActivable = true;
+        public bool isActivable = true;
         [Space]
         [SerializeField] private GenericTransition transition;
 
