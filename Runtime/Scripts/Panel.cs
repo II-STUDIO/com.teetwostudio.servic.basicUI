@@ -7,7 +7,6 @@ namespace Services.UI
     {
         [SerializeField] private GameObject root;
         public bool isDisabledOnClose = true;
-        [SerializeField] private bool allowDynamicInit = false;
         [Space]
         [SerializeField] private GenericTransition transition;
 
@@ -58,8 +57,7 @@ namespace Services.UI
         /// </summary>
         public virtual void Open()
         {
-            if (allowDynamicInit)
-                Initialize();
+            Initialize();
 
             if (!transition.IsInitialized)
             {
@@ -75,8 +73,7 @@ namespace Services.UI
         /// </summary>
         public virtual void Close()
         {
-            if (allowDynamicInit)
-                Initialize();
+            Initialize();
 
             if (!transition.IsInitialized)
             {
