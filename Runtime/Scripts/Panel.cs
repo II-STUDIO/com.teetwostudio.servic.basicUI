@@ -6,7 +6,8 @@ namespace Services.UI
     public class Panel : MonoBehaviour,ITransitionHandle
     {
         [SerializeField] private GameObject root;
-        public bool isActivable = true;
+        public bool isDisabledOnClose = true;
+        [SerializeField] private bool allowDynamicInit = false;
         [Space]
         [SerializeField] private GenericTransition transition;
 
@@ -19,6 +20,8 @@ namespace Services.UI
 
         public UnityEvent OnOpen { get; protected set; }
         public UnityEvent OnClose { get; protected set; }
+
+        public bool IsOpened { get; private set; } = false;
 
         private GameObject Root
         {
@@ -55,6 +58,9 @@ namespace Services.UI
         /// </summary>
         public virtual void Open()
         {
+            if (allowDynamicInit)
+                Initialize();
+
             if (!transition.IsInitialized)
             {
                 Enable();
@@ -69,6 +75,9 @@ namespace Services.UI
         /// </summary>
         public virtual void Close()
         {
+            if (allowDynamicInit)
+                Initialize();
+
             if (!transition.IsInitialized)
             {
                 Disable();
@@ -83,7 +92,7 @@ namespace Services.UI
         /// </summary>
         public void ShowNagative()
         {
-            if (Root.activeSelf)
+            if (IsOpened)
                 Close();
             else
                 Open();
@@ -91,15 +100,17 @@ namespace Services.UI
 
         private void Enable()
         {
-            if (isActivable)
-                Root.SetActive(true);
+            IsOpened = true;
 
+            Root.SetActive(true);
             OnOpen?.Invoke();
         }
 
         private void Disable()
         {
-            if (isActivable)
+            IsOpened = false;
+
+            if (isDisabledOnClose)
                 Root.SetActive(false);
 
             OnClose?.Invoke();
