@@ -4,7 +4,7 @@ using UnityEngine.EventSystems;
 
 namespace Services.UI
 {
-    public abstract class UIDrageHandler : MonoBehaviour, IBeginDragHandler, IDragHandler, IEndDragHandler
+    public abstract class UIDragHandler : MonoBehaviour, IBeginDragHandler, IDragHandler, IEndDragHandler
     {
         [SerializeField] private bool useMousePosition = false;
         [Tag]
@@ -92,35 +92,47 @@ namespace Services.UI
 
         public virtual void OnEndDrag(PointerEventData eventData)
         {
-            GameObject dropOnObject = eventData.pointerCurrentRaycast.gameObject;
+            GameObject targetObject = eventData.pointerCurrentRaycast.gameObject;
 
-            CheckDropable(dropOnObject);
+            CheckDropable(targetObject);
 
             SetEndPoint();
         }
 
-        private void CheckDropable(GameObject dropOnObject)
+        private void CheckDropable(GameObject targetObject)
         {
-            if (!dropOnObject)
+            if (!targetObject)
+            {
+                OnReleased(null);
                 return;
+            }
 
-            if (!targetTag.IsNullOrEmpty() && dropOnObject.tag != targetTag)
+            if (!targetTag.IsNullOrEmpty() && targetObject.tag != targetTag)
+            {
+                OnReleased(null);
                 return;
+            }
 
-            IDropableArea dropArea = dropOnObject.GetComponent<IDropableArea>();
+            if (targetObject == gameObject)
+            {
+                OnReleased(null);
+                return;
+            }
+
+            IDropableArea dropArea = targetObject.GetComponent<IDropableArea>();
 
             if (dropArea == null)
+            {
+                OnReleased(null);
                 return;
+            }
 
-            dropArea.OnDroped(this);
+            dropArea.OnTakeReleaseIn(this);
 
-            OnDropedOnDropableArea(dropArea);
+            OnReleased(dropArea);
         }
 
-        protected virtual void OnDropedOnDropableArea(IDropableArea dropArea)
-        {
-
-        }
+        protected abstract void OnReleased(IDropableArea dropArea);
 
         private void SetBeginPoint()
         {

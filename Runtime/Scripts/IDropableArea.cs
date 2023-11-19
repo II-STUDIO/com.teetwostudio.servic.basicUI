@@ -4,6 +4,6 @@ namespace Services.UI
 {
     public interface IDropableArea
     {
-        public void OnDroped(UIDrageHandler drager);
+        public void OnTakeReleaseIn(UIDragHandler drager);
     }
 }

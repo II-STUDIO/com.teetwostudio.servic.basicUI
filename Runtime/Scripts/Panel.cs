@@ -1,12 +1,14 @@
+using Cysharp.Threading.Tasks;
+using System;
 using UnityEngine;
-using UnityEngine.Events;
 
 namespace Services.UI
 {
     public class Panel : MonoBehaviour,ITransitionHandle
     {
-        [SerializeField] private GameObject root;
+        public bool autoClearAction = true;
         public bool isDisabledOnClose = true;
+        [SerializeField] private GameObject root;
         [Space]
         [SerializeField] private GenericTransition transition;
 
@@ -17,10 +19,12 @@ namespace Services.UI
 
         public bool IsInitialized { get; private set; } = false;
 
-        public UnityEvent OnOpen { get; protected set; }
-        public UnityEvent OnClose { get; protected set; }
+        public Action OnOpen { get; protected set; }
+        public Action OnClose { get; protected set; }
 
         public bool IsOpened { get; private set; } = false;
+
+        private UniTaskCompletionSource utcsAction;
 
         private GameObject Root
         {
@@ -61,7 +65,8 @@ namespace Services.UI
 
             if (!transition.IsInitialized)
             {
-                Enable();
+                OnFadeInBegin();
+                OnFadeInComplete();
                 return;
             }
 
@@ -77,11 +82,33 @@ namespace Services.UI
 
             if (!transition.IsInitialized)
             {
-                Disable();
+                OnFadeOutBegin();
+                OnFadeOutComplete();
                 return;
             }
 
             transition.FadeOut();
+        }
+
+        public async virtual UniTask OpenAsync()
+        {
+            Open();
+
+            if (utcsAction == null)
+                return;
+
+            await utcsAction.Task;
+        }
+
+
+        public async virtual UniTask CloseAsync()
+        {
+            Close();
+
+            if (utcsAction == null)
+                return;
+
+            await utcsAction.Task;
         }
 
         /// <summary>
@@ -116,22 +143,63 @@ namespace Services.UI
         #region Transition_Event
         public virtual void OnFadeInBegin()
         {
+            StartAction();
+
             Enable();
         }
 
         public virtual void OnFadeInComplete()
         {
-            //Do Nothing
+            EndAction();
         }
 
         public virtual void OnFadeOutBegin()
         {
-            //Do Nothing
+            StartAction();
         }
 
         public virtual void OnFadeOutComplete()
         {
             Disable();
+
+            EndAction();
+        }
+
+        private void StartAction()
+        {
+            if (utcsAction != null)
+                utcsAction.TrySetCanceled();
+
+            utcsAction = new UniTaskCompletionSource();
+        }
+
+        private void EndAction()
+        {
+            if (utcsAction == null)
+                return;
+
+            utcsAction.TrySetResult();
+            utcsAction = null;
+        }
+
+        public void ClearAction()
+        {
+            if (utcsAction == null)
+                return;
+
+            utcsAction.TrySetCanceled();
+            utcsAction = null;
+        }
+
+        private void OnDestroy()
+        {
+            if (!autoClearAction)
+                return;
+
+            if (!Application.isPlaying)
+                return;
+
+            ClearAction();
         }
         #endregion
     }
