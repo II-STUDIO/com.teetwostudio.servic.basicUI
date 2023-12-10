@@ -3,6 +3,8 @@ using UnityEngine.UI;
 
 public class ResponsiveGridLayoutGroup : GridLayoutGroup
 {
+    [SerializeField] private float widthMultiple = 1f;
+    [SerializeField] private float heightMultiple = 1f;
     [SerializeField] private bool applyWidth = true;
     [SerializeField] private bool applyHeight = true;
 
@@ -49,6 +51,20 @@ public class ResponsiveGridLayoutGroup : GridLayoutGroup
 
         CalculateCellConstraint();
 
+    }
+
+    public override void SetLayoutHorizontal()
+    {
+        base.SetLayoutHorizontal();
+
+        CalculateCellConstraint();
+    }
+
+    public override void SetLayoutVertical()
+    {
+        base.SetLayoutVertical();
+
+        CalculateCellConstraint();
     }
 
     protected override void OnEnable()
@@ -105,10 +121,10 @@ public class ResponsiveGridLayoutGroup : GridLayoutGroup
         Vector2 size = cellSize;
 
         if (applyWidth)
-            size.x = resultSize;
+            size.x = resultSize * widthMultiple;
 
         if (applyHeight)
-            size.y = resultSize;
+            size.y = resultSize * heightMultiple;
 
         cellSize = size;
     }

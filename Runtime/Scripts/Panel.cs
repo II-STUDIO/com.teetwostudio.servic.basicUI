@@ -4,7 +4,7 @@ using UnityEngine;
 
 namespace Services.UI
 {
-    public class Panel : MonoBehaviour,ITransitionHandle
+    public class Panel : MonoBehaviour, ITransitionHandle
     {
         public bool autoClearAction = true;
         public bool isDisabledOnClose = true;
@@ -19,8 +19,8 @@ namespace Services.UI
 
         public bool IsInitialized { get; private set; } = false;
 
-        public Action OnOpen { get; protected set; }
-        public Action OnClose { get; protected set; }
+        public Action OnOpen { get; set; }
+        public Action OnClose { get; set; }
 
         public bool IsOpened { get; private set; } = false;
 

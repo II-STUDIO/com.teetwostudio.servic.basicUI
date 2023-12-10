@@ -4,10 +4,37 @@ using UnityEngine.UI;
 public class RadialLayout : LayoutGroup
 {
     public float fDistance;
+    public bool preventOverlaping = true;
     [Range(0f, 360f)]
     public float MinAngle, MaxAngle, StartAngle;
 
-    protected override void OnEnable() { base.OnEnable(); CalculateRadial(); }
+    protected override void Start()
+    {
+        base.Start();
+
+        CalculateRadial();
+    }
+
+    protected override void OnEnable()
+    {
+        base.OnEnable();
+
+        CalculateRadial();
+    }
+
+    protected override void OnTransformChildrenChanged()
+    {
+        base.OnTransformChildrenChanged();
+
+        CalculateRadial();
+    }
+
+    protected override void OnRectTransformDimensionsChange()
+    {
+        base.OnRectTransformDimensionsChange();
+
+        CalculateRadial();
+    }
 
     public override void SetLayoutHorizontal() { }
 
@@ -22,15 +49,13 @@ public class RadialLayout : LayoutGroup
         CalculateRadial();
     }
 
-#if UNITY_EDITOR
     protected override void OnValidate()
     {
         base.OnValidate();
         CalculateRadial();
     }
-#endif
 
-   public void CalculateRadial()
+    public void CalculateRadial()
     {
         m_Tracker.Clear();
 
@@ -38,6 +63,12 @@ public class RadialLayout : LayoutGroup
 
         if (childCount == 0)
             return;
+
+        if (preventOverlaping)
+        {
+            float angleIntarvel = 360f / childCount;
+            MaxAngle = Mathf.Clamp(MaxAngle, 0f, 360f - angleIntarvel);
+        }
 
         float fOffsetAngle = ((MaxAngle - MinAngle)) / (childCount - 1);
 

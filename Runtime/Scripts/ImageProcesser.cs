@@ -6,7 +6,7 @@ namespace Services.UI
     public class ImageProcesser : MonoBehaviour
     {
         [System.Serializable]
-        struct ProcessSlot
+        class ProcessSlot
         {
             public Gradient gradient;
             public Image image;
