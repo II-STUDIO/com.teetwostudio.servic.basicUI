@@ -63,7 +63,7 @@ namespace Services.UI
         {
             Initialize();
 
-            if (!transition.IsInitialized)
+            if (!transition.IsInitialized || !transition.IsValideToFadeIn)
             {
                 OnFadeInBegin();
                 OnFadeInComplete();
@@ -80,7 +80,7 @@ namespace Services.UI
         {
             Initialize();
 
-            if (!transition.IsInitialized)
+            if (!transition.IsInitialized || !transition.IsValideToFadeOut)
             {
                 OnFadeOutBegin();
                 OnFadeOutComplete();

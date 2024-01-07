@@ -24,6 +24,16 @@ namespace Services.UI
 
         public bool IsInitialized { get; private set; }
 
+        public bool IsValideToFadeIn
+        {
+            get => fadeIn;
+        }
+
+        public bool IsValideToFadeOut
+        {
+            get => fadeOut;
+        }
+
         public void Initialize(ITransitionHandle handle)
         {
             if (IsInitialized)
@@ -31,8 +41,10 @@ namespace Services.UI
 
             _handle = handle;
 
-            fadeIn.SetListener(OnFadeInStart, OnFadeInCompelte);
-            fadeOut.SetListener(OnFadeOutStart, OnFadeOutComplete);
+            if (fadeIn)
+                fadeIn.SetListener(OnFadeInStart, OnFadeInCompelte);
+            if (fadeOut)
+                fadeOut.SetListener(OnFadeOutStart, OnFadeOutComplete);
 
             IsInitialized = true;
         }
@@ -49,7 +61,8 @@ namespace Services.UI
             if (IsProcessing)
                 return;
 
-            fadeIn.Begin();
+            if (fadeIn)
+                fadeIn.Begin();
         }
 
         public void FadeOut()
@@ -63,7 +76,8 @@ namespace Services.UI
             if (IsProcessing)
                 return;
 
-            fadeOut.Begin();
+            if (fadeOut)
+                fadeOut.Begin();
         }
 
         #region FadeIn Event
