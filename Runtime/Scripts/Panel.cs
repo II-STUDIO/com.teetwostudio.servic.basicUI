@@ -10,9 +10,9 @@ namespace Services.UI
         public bool isDisabledOnClose = true;
         [SerializeField] private GameObject root;
         [Space]
-        [SerializeField] private GenericTransition transition;
+        [SerializeField] private PanelTransition transition;
 
-        public GenericTransition Transition
+        public PanelTransition Transition
         {
             get => transition;
         }

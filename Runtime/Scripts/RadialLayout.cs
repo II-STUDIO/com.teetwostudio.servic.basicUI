@@ -11,8 +11,9 @@ public class RadialLayout : LayoutGroup
     protected override void Start()
     {
         base.Start();
-
+#if !UNITY_EDITOR
         CalculateRadial();
+#endif
     }
 
     protected override void OnEnable()
