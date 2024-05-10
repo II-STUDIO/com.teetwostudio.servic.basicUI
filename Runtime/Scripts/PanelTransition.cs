@@ -12,12 +12,24 @@ namespace Services.UI
 
         public float FadeInTime
         {
-            get => fadeIn.Time;
+            get
+            {
+                if (fadeIn == null)
+                    return 0f;
+
+                return fadeIn.Time;
+            }
         }
 
         public float FadeOutTime
         {
-            get => fadeOut.Time;
+            get
+            {
+                if (fadeOut == null)
+                    return 0f;
+
+                return fadeOut.Time;
+            }
         }
 
         public bool IsProcessing { get; private set; }
