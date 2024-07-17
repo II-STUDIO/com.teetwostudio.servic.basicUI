@@ -28,7 +28,7 @@ namespace Services.UI
         }
         private void Update()
         {
-            detectTimeCountdown.Update(SystemTime.DeltaTime);
+            detectTimeCountdown.LoopUpdateEvent(Time.deltaTime);
         }
 
         public void OnBeginDrag(PointerEventData eventData)
