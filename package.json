@@ -1,11 +1,11 @@
 {
     "name": "com.teetwostudio.services.basic_ui",
-    "version": "1.2",
+    "version": "1.2.0",
     "unityRelease": "2f1",
     "displayName": "TEE II Studio Services Basic UI",
     "description": "This will help your for mocking or official craete UI.",
     "dependencies": {
-      "com.teetwostudio.services.utility": "1.2",
+      "com.teetwostudio.services.utility": "1.2.0",
       "com.unity.2d.sprite": "1.0.0"
     },
     "keywords": [
