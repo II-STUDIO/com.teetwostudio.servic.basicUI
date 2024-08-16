@@ -71,7 +71,13 @@ namespace Services.UI
             }
 
             if (IsProcessing)
-                return;
+            {
+                if (fadeIn.isProcessing)
+                    return;
+
+                if (fadeOut.isProcessing)
+                    fadeOut.ForceCompleted();
+            }
 
             if (fadeIn)
                 fadeIn.Begin();
@@ -86,7 +92,13 @@ namespace Services.UI
             }
 
             if (IsProcessing)
-                return;
+            {
+                if (fadeOut.isProcessing)
+                    return;
+
+                if (fadeIn.isProcessing)
+                    fadeIn.ForceCompleted();
+            }
 
             if (fadeOut)
                 fadeOut.Begin();
