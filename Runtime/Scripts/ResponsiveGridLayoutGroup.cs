@@ -22,12 +22,14 @@ public class ResponsiveGridLayoutGroup : GridLayoutGroup
         CalculateCellConstraint();
     }
 
+#if UNITY_EDITOR
     protected override void OnValidate()
     {
         base.OnValidate();
 
         CalculateCellConstraint();
     }
+#endif
 
     protected override void OnTransformChildrenChanged()
     {
