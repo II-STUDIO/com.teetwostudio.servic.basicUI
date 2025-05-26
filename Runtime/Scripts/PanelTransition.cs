@@ -10,77 +10,135 @@ namespace Services.UI
 
         private ITransitionHandle _handle;
 
-        public float FadeInTime => fadeIn ? fadeIn.Time : 0f;
-        public float FadeOutTime => fadeOut ? fadeOut.Time : 0f;
+        public float FadeInTime
+        {
+            get
+            {
+                if (fadeIn == null)
+                    return 0f;
+
+                return fadeIn.Time;
+            }
+        }
+
+        public float FadeOutTime
+        {
+            get
+            {
+                if (fadeOut == null)
+                    return 0f;
+
+                return fadeOut.Time;
+            }
+        }
 
         public bool IsProcessing { get; private set; }
+
         public bool IsInitialized { get; private set; }
 
-        public bool IsValidToFadeIn => fadeIn != null;
-        public bool IsValidToFadeOut => fadeOut != null;
+        public bool IsValidToFadeIn
+        {
+            get => fadeIn;
+        }
+
+        public bool IsValidToFadeOut
+        {
+            get => fadeOut;
+        }
 
         public void Initialize(ITransitionHandle handle)
         {
-            if (IsInitialized) return;
+            if (IsInitialized)
+                return;
 
             _handle = handle;
 
-            fadeIn?.SetListener(OnFadeInStart, OnFadeInComplete);
-            fadeOut?.SetListener(OnFadeOutStart, OnFadeOutComplete);
+            if (fadeIn)
+                fadeIn.SetListener(OnFadeInStart, OnFadeInCompelte);
+            if (fadeOut)
+                fadeOut.SetListener(OnFadeOutStart, OnFadeOutComplete);
 
             IsInitialized = true;
         }
+
 
         public void FadeIn()
         {
             if (!IsInitialized)
             {
-                Debug.LogWarning("PanelTransition must be initialized before FadeIn.");
+                Debug.LogWarningFormat("Panel trasition need to initialize first");
                 return;
             }
 
-            if (IsProcessing && fadeOut?.IsProcessing == true)
-                fadeOut.ForceCompleted();
+            if (IsProcessing)
+            {
+                if (fadeIn.IsProcessing)
+                    return;
 
-            fadeIn?.Begin();
+                if (fadeOut.IsProcessing)
+                    fadeOut.ForceCompleted();
+            }
+
+            if (fadeIn)
+                fadeIn.Begin();
         }
 
         public void FadeOut()
         {
             if (!IsInitialized)
             {
-                Debug.LogWarning("PanelTransition must be initialized before FadeOut.");
+                Debug.LogWarningFormat("Panel trasition need to initialize first");
                 return;
             }
 
-            if (IsProcessing && fadeIn?.IsProcessing == true)
-                fadeIn.ForceCompleted();
+            if (IsProcessing)
+            {
+                if (fadeOut.IsProcessing)
+                    return;
 
-            fadeOut?.Begin();
+                if (fadeIn.IsProcessing)
+                    fadeIn.ForceCompleted();
+            }
+
+            if (fadeOut)
+                fadeOut.Begin();
         }
 
+        #region FadeIn Event
         private void OnFadeInStart()
         {
             IsProcessing = true;
-            _handle?.OnFadeInBegin();
+
+            if (_handle != null)
+                _handle.OnFadeInBegin();
         }
 
-        private void OnFadeInComplete()
+        private void OnFadeInCompelte()
         {
             IsProcessing = false;
-            _handle?.OnFadeInComplete();
+
+            if (_handle != null)
+                _handle.OnFadeInComplete();
         }
 
+        #endregion
+
+        #region FadeOut Event
         private void OnFadeOutStart()
         {
             IsProcessing = true;
-            _handle?.OnFadeOutBegin();
+
+            if (_handle != null)
+                _handle.OnFadeOutBegin();
         }
 
         private void OnFadeOutComplete()
         {
             IsProcessing = false;
-            _handle?.OnFadeOutComplete();
+
+            if (_handle != null)
+                _handle.OnFadeOutComplete();
         }
+        #endregion
     }
 }

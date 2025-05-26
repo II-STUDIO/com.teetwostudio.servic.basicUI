@@ -6,25 +6,41 @@ namespace Services.UI
 {
     public class Panel : MonoBehaviour, ITransitionHandle
     {
-        [Header("Panel Settings")]
         public bool autoClearAction = true;
         public bool isDisabledOnClose = true;
-
         [SerializeField] private GameObject root;
+        [Space]
         [SerializeField] private PanelTransition transition;
 
-        public PanelTransition Transition => transition;
+        public PanelTransition Transition
+        {
+            get => transition;
+        }
 
-        public bool IsInitialized { get; private set; }
-        public bool IsOpened { get; private set; }
+        public bool IsInitialized { get; private set; } = false;
 
         public Action OnOpen { get; set; }
         public Action OnClose { get; set; }
 
-        private UniTaskCompletionSource? utcsAction;
+        public bool IsOpened { get; private set; } = false;
 
-        private GameObject Root => root != null ? root : (root = gameObject);
+        private UniTaskCompletionSource utcsAction;
 
+        private GameObject Root
+        {
+            get
+            {
+                if (root)
+                    return root;
+
+                root = gameObject;
+                return root;
+            }
+        }
+
+        /// <summary>
+        /// Intialize this panel and transition (transition can initable when property 'animation' is not null or empty only).
+        /// </summary>
         protected virtual void Start()
         {
             Initialize();
@@ -32,16 +48,19 @@ namespace Services.UI
 
         public virtual void Initialize()
         {
-            if (IsInitialized) return;
+            if (IsInitialized)
+                return;
 
             transition.Initialize(this);
+
             IsInitialized = true;
         }
 
+        /// <summary>
+        /// Enable or show this pnael.
+        /// </summary>
         public virtual void Open()
         {
-            if (IsOpened) return;
-
             Initialize();
 
             if (!transition.IsInitialized || !transition.IsValidToFadeIn)
@@ -54,10 +73,11 @@ namespace Services.UI
             transition.FadeIn();
         }
 
+        /// <summary>
+        /// Disable or hide this panel.
+        /// </summary>
         public virtual void Close()
         {
-            if (!IsOpened) return;
-
             Initialize();
 
             if (!transition.IsInitialized || !transition.IsValidToFadeOut)
@@ -72,25 +92,29 @@ namespace Services.UI
 
         public async virtual UniTask OpenAsync()
         {
-            if (IsOpened) return;
-
-            utcsAction = new UniTaskCompletionSource();
             Open();
+
+            if (utcsAction == null)
+                return;
 
             await utcsAction.Task;
         }
+
 
         public async virtual UniTask CloseAsync()
         {
-            if (!IsOpened) return;
-
-            utcsAction = new UniTaskCompletionSource();
             Close();
+
+            if (utcsAction == null)
+                return;
 
             await utcsAction.Task;
         }
 
-        public void Toggle()
+        /// <summary>
+        /// Nagative switch open or close when invoke.
+        /// </summary>
+        public void ShowNagative()
         {
             if (IsOpened)
                 Close();
@@ -101,6 +125,7 @@ namespace Services.UI
         private void Enable()
         {
             IsOpened = true;
+
             Root.SetActive(true);
             OnOpen?.Invoke();
         }
@@ -108,17 +133,18 @@ namespace Services.UI
         private void Disable()
         {
             IsOpened = false;
+
             if (isDisabledOnClose)
                 Root.SetActive(false);
 
             OnClose?.Invoke();
         }
 
-        #region Transition Event Hooks
-
+        #region Transition_Event
         public virtual void OnFadeInBegin()
         {
             StartAction();
+
             Enable();
         }
 
@@ -135,33 +161,46 @@ namespace Services.UI
         public virtual void OnFadeOutComplete()
         {
             Disable();
+
             EndAction();
         }
 
         private void StartAction()
         {
-            utcsAction?.TrySetCanceled(); // Cancel previous action if overlapping
-            utcsAction ??= new UniTaskCompletionSource();
+            if (utcsAction != null)
+                utcsAction.TrySetCanceled();
+
+            utcsAction = new UniTaskCompletionSource();
         }
 
         private void EndAction()
         {
-            utcsAction?.TrySetResult();
+            if (utcsAction == null)
+                return;
+
+            utcsAction.TrySetResult();
             utcsAction = null;
         }
 
         public void ClearAction()
         {
-            utcsAction?.TrySetCanceled();
+            if (utcsAction == null)
+                return;
+
+            utcsAction.TrySetCanceled();
             utcsAction = null;
         }
 
         private void OnDestroy()
         {
-            if (Application.isPlaying && autoClearAction)
-                ClearAction();
-        }
+            if (!autoClearAction)
+                return;
 
+            if (!Application.isPlaying)
+                return;
+
+            ClearAction();
+        }
         #endregion
     }
 }
